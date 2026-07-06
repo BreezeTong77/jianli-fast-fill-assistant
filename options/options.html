@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>简历快投助手 - 设置</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div id="options-app">
+    <header>
+      <div class="header-row">
+        <button id="btn-back" class="btn-back" title="返回上一页">← 返回</button>
+        <img class="options-logo" src="../icons/logo-48.png" alt="简历快投助手">
+        <div class="header-copy">
+          <h1>简历快投助手 设置</h1>
+          <p class="subtitle">管理你的简历分类和字段，修改会自动保存</p>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section id="categories-panel">
+        <div class="panel-header">
+          <h2>分类列表</h2>
+          <button id="btn-add-category" class="btn-primary">+ 新增分类</button>
+        </div>
+        <div id="categories-list">
+          <!-- 分类项动态生成 -->
+        </div>
+      </section>
+
+      <section id="fields-panel">
+        <div class="panel-header">
+          <h2 id="current-category-title">请选择一个分类</h2>
+          <button id="btn-add-field" class="btn-primary" disabled>+ 新增字段</button>
+        </div>
+        <div id="fields-list">
+          <!-- 字段项动态生成 -->
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span id="save-status">✓ 已自动保存</span>
+    </footer>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>
