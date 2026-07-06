@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>简历快投助手</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div id="app">
+    <!-- 标题 -->
+    <div class="popup-header">
+      <span class="popup-icon">📋</span>
+      <span class="popup-title">简历快投助手</span>
+    </div>
+
+    <!-- 开关区域 -->
+    <div class="popup-body">
+      <div class="toggle-row">
+        <span class="toggle-label">显示浮动面板</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggle-panel">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <p class="popup-hint">开启后，页面右侧会出现可拖动的浮动面板</p>
+    </div>
+
+    <!-- 底部链接 -->
+    <div class="popup-footer">
+      <a href="#" id="btn-open-options">⚙ 管理分类和字段</a>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

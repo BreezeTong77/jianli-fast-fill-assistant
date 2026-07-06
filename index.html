@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>简历快投助手 · 操作演示</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: #000;
+    display: flex; flex-direction: column; align-items: center;
+    min-height: 100vh; min-height: 100dvh;
+    overflow: hidden;
+    touch-action: pan-y;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px;
+    background: linear-gradient(180deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);
+  }
+  .header .step-label {
+    color: #fff; font-size: 13px; font-weight: 600;
+    background: rgba(255,255,255,0.15); padding: 4px 12px; border-radius: 12px;
+  }
+  .header-actions { display: flex; align-items: center; gap: 10px; }
+  .download-link {
+    color: #111827; text-decoration: none; font-size: 13px; font-weight: 700;
+    background: #fff; padding: 7px 12px; border-radius: 999px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  }
+  .download-link:active { transform: translateY(1px); }
+  .header .close {
+    color: rgba(255,255,255,0.7); font-size: 18px; padding: 4px; cursor: pointer;
+  }
+
+  .slider {
+    width: 100%; flex: 1;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; position: relative;
+  }
+  .slides {
+    display: flex; transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    height: 100%; width: 100%;
+  }
+  .slide {
+    flex: 0 0 100%; display: flex; align-items: center; justify-content: center;
+    padding: 4px;
+  }
+  .slide img {
+    width: 100%; height: auto; max-height: 70vh; max-height: 70dvh;
+    object-fit: contain;
+    border-radius: 6px; box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+  }
+
+  .footer {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 10;
+    padding: 16px 20px 24px;
+    background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+  }
+  .dots {
+    display: flex; gap: 6px;
+  }
+  .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: rgba(255,255,255,0.35); transition: all 0.3s;
+  }
+  .dot.active { background: #fff; width: 18px; border-radius: 3px; }
+
+  .nav-row {
+    display: flex; gap: 12px; align-items: center;
+  }
+  .nav-btn {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(255,255,255,0.12); border: none; color: #fff;
+    font-size: 16px; cursor: pointer; display: flex; align-items: center;
+    justify-content: center; transition: background 0.2s;
+  }
+  .nav-btn:active { background: rgba(255,255,255,0.25); }
+  .page-num {
+    color: rgba(255,255,255,0.7); font-size: 13px; font-weight: 500;
+    min-width: 50px; text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="step-label" id="stepLabel">第一步</span>
+  <div class="header-actions">
+    <a class="download-link" href="https://github.com/BreezeTong77/jianli-fast-fill-assistant/archive/refs/heads/main.zip" target="_blank" rel="noopener">下载插件 ZIP</a>
+    <span class="close">✕</span>
+  </div>
+</div>
+
+<div class="slider" id="slider">
+  <div class="slides" id="slides"></div>
+</div>
+
+<div class="footer">
+  <div class="dots" id="dots"></div>
+  <div class="nav-row">
+    <button class="nav-btn" id="prevBtn">←</button>
+    <span class="page-num" id="pageNum">1 / 8</span>
+    <button class="nav-btn" id="nextBtn">→</button>
+  </div>
+</div>
+
+<script>
+const demoBuild = 'demo-order-20260706-final';
+const images = [
+  'assets/step-01-open-repo.png',
+  'assets/step-02-download.png',
+  'assets/step-03-manage-extensions.png',
+  'assets/step-04-load-unpacked.png',
+  'assets/step-05-pin-extension.png',
+  'assets/step-07-open-settings.png',
+  'assets/step-06-settings.png',
+  'assets/step-08-paste.png'
+];
+
+const steps = ['第一步', '第二步', '第三步', '第四步', '第五步', '第六步', '第七步', '第八步'];
+
+let current = 0;
+let startX = 0;
+let isDragging = false;
+
+const slidesEl = document.getElementById('slides');
+const dotsEl = document.getElementById('dots');
+const stepLabel = document.getElementById('stepLabel');
+const pageNum = document.getElementById('pageNum');
+
+// 渲染
+images.forEach((url, i) => {
+  const slide = document.createElement('div');
+  slide.className = 'slide';
+  const img = document.createElement('img');
+  img.src = url;
+  img.alt = steps[i];
+  img.loading = i === 0 ? 'eager' : 'lazy';
+  slide.appendChild(img);
+  slidesEl.appendChild(slide);
+
+  const dot = document.createElement('div');
+  dot.className = 'dot' + (i === 0 ? ' active' : '');
+  dot.addEventListener('click', () => goTo(i));
+  dotsEl.appendChild(dot);
+});
+
+function goTo(index) {
+  current = Math.max(0, Math.min(index, images.length - 1));
+  slidesEl.style.transform = `translateX(-${current * 100}%)`;
+  stepLabel.textContent = steps[current];
+  pageNum.textContent = `${current + 1} / ${images.length}`;
+  document.querySelectorAll('.dot').forEach((d, i) => {
+    d.classList.toggle('active', i === current);
+  });
+}
+
+document.getElementById('prevBtn').addEventListener('click', () => goTo(current - 1));
+document.getElementById('nextBtn').addEventListener('click', () => goTo(current + 1));
+
+// 触摸滑动
+const slider = document.getElementById('slider');
+slider.addEventListener('touchstart', (e) => {
+  startX = e.touches[0].clientX;
+  isDragging = true;
+  slidesEl.style.transition = 'none';
+}, { passive: true });
+
+slider.addEventListener('touchmove', (e) => {
+  if (!isDragging) return;
+  const dx = e.touches[0].clientX - startX;
+  slidesEl.style.transform = `translateX(${-current * 100 + (dx / slider.offsetWidth * 100)}%)`;
+}, { passive: true });
+
+slider.addEventListener('touchend', (e) => {
+  if (!isDragging) return;
+  isDragging = false;
+  slidesEl.style.transition = 'transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+  const dx = e.changedTouches[0].clientX - startX;
+  if (dx < -50) goTo(current + 1);
+  else if (dx > 50) goTo(current - 1);
+  else goTo(current);
+});
+
+// 键盘
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight') goTo(current + 1);
+  if (e.key === 'ArrowLeft') goTo(current - 1);
+});
+</script>
+</body>
+</html>
